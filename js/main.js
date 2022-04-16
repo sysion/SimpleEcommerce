@@ -62,6 +62,9 @@ let cs = function createSection(product){
 
 	section_title.innerHTML = product.name;
 	section_img.src = product.img;
+	section_img.alt = img_alt + product.name;
+	//section_img.setAttribute('src', product.img);               //ok also
+	//section_img.setAttribute('alt', img_alt + product.name);    //ok also
 	section_desc.innerHTML = product.desc;
 	section_price.innerHTML = "N" + product.price;
 	section_button.innerHTML = btn_label;
