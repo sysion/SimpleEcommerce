@@ -148,6 +148,20 @@ let up = function updatePage(){
 		//console.log("product => "+JSON.stringify(Products[key]));		//JSON.stringify(object)
 		
 	}
+
+	//load previous session from local storage
+	cart = getFromLocalStorage('cart');
+	local_cart = getFromLocalStorage('local_cart');
+	//console.log(local_cart);
+
+	if (local_cart.length > 0){
+		local_cart.forEach(function(item){
+			cartEntry(item);
+		});
+		menu_item_cart_strong.innerHTML = cart.length;
+		menu_item_cart_span.classList.remove('hide-cart-count');
+		totalPurchase(local_cart);
+	}
 }
 
 
@@ -224,6 +238,10 @@ let atc = function addToCart(event){
 		menu_item_cart_span.classList.remove('hide-cart-count');
 		totalPurchase(local_cart);
 
+		//add to local storage
+		saveToLocalStorage('cart', cart);
+		saveToLocalStorage('local_cart', local_cart);
+
 		/*
 		  for objects DON'T use any variable/string in addition to the object in console.log,
 		  it will RESULT in [object Object] result as in below statement:
@@ -266,7 +284,12 @@ function cartEntry(product){
 
 	product_name.innerHTML = product.name; 	
 	product_desc.innerHTML = product.desc;
-	product_count.innerHTML = 1;
+	if (product.qty){
+		product_count.innerHTML = product.qty;	
+	}
+	else{
+		product_count.innerHTML = 1;
+	}
 	product_price.innerHTML = product.price;
 	add_item.innerHTML = "+";
 	minus_item.innerHTML = "-";
@@ -317,9 +340,10 @@ function itemAddOne(event){
 		}
 	});
 	//console.log(local_cart);
-	totalPurchase(local_cart);
 
 	//add to local storage
+	totalPurchase(local_cart);
+	saveToLocalStorage('local_cart', local_cart);
 }
 
 function itemRemoveOne(event){
@@ -354,9 +378,10 @@ function itemRemoveOne(event){
 			}
 		});
 		//console.log(local_cart);
-		totalPurchase(local_cart);
 
 		//remove from local storage
+		totalPurchase(local_cart);
+		saveToLocalStorage('local_cart', local_cart);
 	}
 }
 
@@ -391,10 +416,17 @@ function deleteItem(event){
 				local_cart.splice(index, 1);	//since cart/local_cart have same entry except for qty
 				menu_item_cart_strong.innerHTML = cart.length;
 				totalPurchase(local_cart);
+				saveToLocalStorage('cart', cart);
+				saveToLocalStorage('local_cart', local_cart);
 			}
 			else {
 				cart = [];
 				local_cart = [];
+
+				//remove from local storage
+				saveToLocalStorage('cart', cart);
+				saveToLocalStorage('local_cart', local_cart);
+
 				menu_item_cart_span.classList.add('hide-cart-count');
 				cart_total.innerHTML = 'N0.00';
 			}	
@@ -403,13 +435,17 @@ function deleteItem(event){
 	else {
 		cart = [];
 		local_cart = [];
+
+		//remove from local storage
+		saveToLocalStorage('cart', cart);
+		saveToLocalStorage('local_cart', local_cart);
+
 		menu_item_cart_span.classList.add('hide-cart-count');
 		cart_total.innerHTML = 'N0.00';
 	}
 	//console.log('cart:');
 	//console.log(cart);
 
-	//remove from local storage
 	cart_main.removeChild(targetParent);
 }
 
@@ -428,9 +464,13 @@ function emptyCart(){
 		
 		cart = [];
 		local_cart = [];
+
+		//clear localStorage also
+		saveToLocalStorage('cart', cart);
+		saveToLocalStorage('local_cart', local_cart);
+
 		menu_item_cart_span.classList.add('hide-cart-count');
 		cart_total.innerHTML = 'N0.00';
-		//clear localStorage also
 	}	
 }
 
@@ -444,16 +484,20 @@ function totalPurchase(cart){
 
 	local_cart.forEach(function(cartItem){
 		total = (parseFloat(total) + parseFloat(cartItem.price.substring(1))).toFixed(2);
-		console.log('total => '+total);
+		//console.log('total => '+total);
 	});
 
 	total = 'N' + total;
 	cart_total.innerHTML = total;
 }
 
-function saveToLocalStorage(){}
+function saveToLocalStorage(name, cart){
+	localStorage.setItem(name, JSON.stringify(cart));
+}
 
-function getFromLocalStorage(){}
+function getFromLocalStorage(name){
+	return JSON.parse(localStorage.getItem(name)) || [];
+}
 
 menu_item_cart.addEventListener('click', function(){
 	cart_page.classList.add('show-cart');
