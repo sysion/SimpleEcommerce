@@ -9,9 +9,11 @@ const menu_item_cart_span = document.querySelector('nav ul li:last-child a span'
 const menu_item_cart_strong = document.querySelector('nav ul li:last-child a strong');
 const cart_page = document.querySelector('.cart'); 
 const close_cart = document.querySelector('.close-cart');
+const cart_total = document.querySelector('.cart-total strong');
 const btn_label = "Add To Cart";
 const img_alt = "Image for ";
 let cart = [];
+let local_cart = [];
 
 
 /**********************************************************************
@@ -213,11 +215,14 @@ let atc = function addToCart(event){
 		//var id = 'key_' + key;
 		//var product = {key: {name: name, img: img, desc: desc, price: price}};
 		var product = {name: name, img: img, desc: desc, price: price};
+		var local_product = {name: name, img: img, desc: desc, price: price, qty: 1};
 		//cart[key] = product;
 		//console.log(product.name);
 		cart.push(product);
+		local_cart.push(local_product);
 		menu_item_cart_strong.innerHTML = cart.length;
 		menu_item_cart_span.classList.remove('hide-cart-count');
+		totalPurchase(local_cart);
 
 		/*
 		  for objects DON'T use any variable/string in addition to the object in console.log,
@@ -286,12 +291,13 @@ function cartEntry(product){
 }
 
 function itemAddOne(event){
-	event.preventDefault();
-	event.stopPropagation();
+	//event.preventDefault();
+	//event.stopPropagation();
 
 	var sibling = event.target.closest('div').previousSibling;
 	//console.log('sibling className => '+sibling.className);
 	//var itemCount = sibling.getElementsByClassName('.product-count')[0].innerHTML;  //not working
+	var itemName = sibling.querySelector('.product-name').innerHTML;
 	var itemCount = sibling.querySelector('.product-count').innerHTML;
 	var itemPrice = sibling.querySelector('.product-price').innerHTML;
 	itemPrice = parseFloat(itemPrice.substring(1));
@@ -301,16 +307,28 @@ function itemAddOne(event){
 	itemCount = parseFloat(itemCount) + 1;
 	sibling.querySelector('.product-count').innerHTML = itemCount;
 	sibling.querySelector('.product-price').innerHTML = itemPrice;
-	//add to cart
+
+	//add to local_cart (cart does not contain item count)
+	local_cart.forEach(function(item){
+		if(item.name === itemName){
+			item.price = itemPrice;
+			item.qty = itemCount;
+			return;
+		}
+	});
+	//console.log(local_cart);
+	totalPurchase(local_cart);
+
 	//add to local storage
 }
 
 function itemRemoveOne(event){
-	event.preventDefault();
-	event.stopPropagation();
+	//event.preventDefault();
+	//event.stopPropagation();
 
 	var sibling = event.target.closest('div').previousSibling;
 	//console.log('sibling className => '+sibling.className);
+	var itemName = sibling.querySelector('.product-name').innerHTML;
 	var itemCount = sibling.querySelector('.product-count').innerHTML;
 	var itemPrice = sibling.querySelector('.product-price').innerHTML;
 
@@ -326,20 +344,32 @@ function itemRemoveOne(event){
 		itemCount = parseFloat(itemCount) - 1;
 		sibling.querySelector('.product-count').innerHTML = itemCount;
 		sibling.querySelector('.product-price').innerHTML = itemPrice;
-		//remove from cart
+
+		//remove from local_cart (cart does not contain item count)
+		local_cart.forEach(function(item){
+			if(item.name === itemName){
+				item.price = itemPrice;
+				item.qty = itemCount;
+				return;
+			}
+		});
+		//console.log(local_cart);
+		totalPurchase(local_cart);
+
 		//remove from local storage
 	}
 }
 
 function deleteItem(event){
-	event.preventDefault();
-	event.stopPropagation();
+	//event.preventDefault();
+	//event.stopPropagation();
 
 	//var cart_item = document.getElementsByClassName('cart-item')[0]; //targets first .cart-item
 	var targetParent = event.target.parentElement.parentElement;   //targets .cart-item from which event is triggered
 	var cart_main = document.querySelector('.cart-main');
 	//console.log('targetParent => '+targetParent.className);
 	
+	//remove from cart and local_cart
 	var cart_product_name = targetParent.getElementsByClassName('product-name')[0].innerHTML;
 	//console.log('cart_product_name => '+cart_product_name);
 	var product = cart.filter(product => {   //filter RETURNS an array
@@ -358,17 +388,23 @@ function deleteItem(event){
 
 			if (index !== -1){
 				cart.splice(index, 1);
+				local_cart.splice(index, 1);	//since cart/local_cart have same entry except for qty
 				menu_item_cart_strong.innerHTML = cart.length;
+				totalPurchase(local_cart);
 			}
 			else {
 				cart = [];
+				local_cart = [];
 				menu_item_cart_span.classList.add('hide-cart-count');
+				cart_total.innerHTML = 'N0.00';
 			}	
 		}
 	}
 	else {
 		cart = [];
+		local_cart = [];
 		menu_item_cart_span.classList.add('hide-cart-count');
+		cart_total.innerHTML = 'N0.00';
 	}
 	//console.log('cart:');
 	//console.log(cart);
@@ -391,13 +427,28 @@ function emptyCart(){
 		});
 		
 		cart = [];
+		local_cart = [];
 		menu_item_cart_span.classList.add('hide-cart-count');
+		cart_total.innerHTML = 'N0.00';
 		//clear localStorage also
 	}	
 }
 
 function checkoutCart(){
-	console.log(cart);
+	//console.log(local_cart);
+	
+}
+
+function totalPurchase(cart){
+	var total = 0;
+
+	local_cart.forEach(function(cartItem){
+		total = (parseFloat(total) + parseFloat(cartItem.price.substring(1))).toFixed(2);
+		console.log('total => '+total);
+	});
+
+	total = 'N' + total;
+	cart_total.innerHTML = total;
 }
 
 function saveToLocalStorage(){}
