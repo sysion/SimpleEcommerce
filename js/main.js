@@ -6,6 +6,7 @@ const empty_cart = document.querySelector('.empty-cart');
 const checkout = document.querySelector('.checkout');
 const menu_item_cart = document.querySelector('nav ul li:last-child a');  //cart menu item
 const cart_page = document.querySelector('.cart'); 
+const close_cart = document.querySelector('.close-cart');
 const btn_label = "Add To Cart";
 const img_alt = "Image for ";
 let cart = [];
@@ -396,6 +397,10 @@ function getFromLocalStorage(){}
 
 menu_item_cart.addEventListener('click', function(){
 	cart_page.classList.add('show-cart');
+});
+
+close_cart.addEventListener('click', function(){
+	cart_page.classList.remove('show-cart');
 });
 
 empty_cart.addEventListener('click', emptyCart);
