@@ -2,6 +2,8 @@ import Products from "./Products.js";
 
 
 const main = document.querySelector('main');
+const empty_cart = document.querySelector('.empty-cart');
+const checkout = document.querySelector('.checkout');
 const btn_label = "Add To Cart";
 const img_alt = "Image for ";
 let cart = [];
@@ -123,14 +125,23 @@ let cs = function createSection(key, product){
 	main.appendChild(section);
 }
 
+//load data from Products.js
 let up = function updatePage(){
 	for (let key in Products){
 		cs(key, Products[key]);
+		
+		/*
+		  for objects DON'T use any variable/string in addition to the object in console.log,
+		  it will RESULT in [object Object] result as in below statement:
+
+			console.log('Products['+key+'] => '+Products[key]);
+		*/
+		//BOTH Methods below are OK for console.log OBJECTS
+		//console.log(Products[key]);  //ALWAYS console.log objects alone like this OR         
+		//console.log("product => "+JSON.stringify(Products[key]));		//JSON.stringify(object)
+		
 	}
 }
-
-//window.addEventListener('load', up);
-window.addEventListener('DOMContentLoaded', up);
 
 
 /********************************************************************************
@@ -158,36 +169,63 @@ for (var i=0; i<buttons.length; i++){
 let atc = function addToCart(event){  
 	var parent = event.target.closest('section'); 
 	//console.log(parent);
-	var product = {};
+	//var product = {};
+	var canAdd = true;
 
-	if (parent.className === 'product-item'){
+	if (cart){
+		var cart_product_name = parent.getElementsByClassName('product-name')[0].innerHTML;
+		//console.log('sibling => '+cart_product_name);
+		var pn = cart.forEach(product => {
+			if (product.name === cart_product_name){
+				canAdd = false;
+			}
+		});
+		//console.log('pn:');
+		//console.log(pn);
+	}
+	//console.log('canAdd => '+canAdd);
+
+	if (parent.className === 'product-item' && canAdd){
 		/********************************************************************************
 		** using this method because element is dynamically created and 
 		** getElementBy{*}/getElementsBy{*} and
 		** document.querySelector/document.querySelectorAll are not working
 		********************************************************************************/
 		var children = parent.children;      
-		var title = children[0].innerHTML;
+		var name = children[0].innerHTML;
 		var img = '.' + children[1].src.split(window.location.origin )[1];
 		var key = children[1].alt.split('_')[1];
 		var desc = children[2].innerHTML;
 		var price = children[3].innerHTML;
 
-		console.log("title => "+title);
+		/*console.log("name => "+name);
 		console.log("img => "+img);
 		console.log("key => "+key);
 		console.log("desc => "+desc);
-		console.log("price => "+price);
+		console.log("price => "+price);*/
 		//cartEntry();
 
-		//product[key] = {name: title, img: img, desc: desc, price: price};
-		//console.log("product_key => "+product[key]+", product_value => "+product.value);
+		//var id = 'key_' + key;
+		//var product = {key: {name: name, img: img, desc: desc, price: price}};
+		var product = {name: name, img: img, desc: desc, price: price};
+		//cart[key] = product;
+		//console.log(product.name);
+		cart.push(product);
 
-		
+		/*
+		  for objects DON'T use any variable/string in addition to the object in console.log,
+		  it will RESULT in [object Object] result as in below statement:
+
+			console.log("product => "+product);
+		*/
+		//BOTH Methods below are OK for console.log OBJECTS
+		//console.log(product);	//ALWAYS console.log objects alone like this OR         
+		//console.log("product => "+JSON.stringify(product));		//JSON.stringify(object)
+		cartEntry(product);
 	}
 }
 
-function cartEntry(){
+function cartEntry(product){
 	//element already in DOM (parent of elements to be added)
 	var cart_main = document.querySelector('.cart-main');
 
@@ -214,13 +252,17 @@ function cartEntry(){
 	minus_item.classList.add('minus-item', 'cart-number-btn');
 	delete_item.classList.add('delete-item', 'cart-number-btn');
 
-	product_name.innerHTML = "product-01"; 	
-	product_desc.innerHTML = "first product item";
-	product_count.innerHTML = "1";
-	product_price.innerHTML = "N123.45";
+	product_name.innerHTML = product.name; 	
+	product_desc.innerHTML = product.desc;
+	product_count.innerHTML = 1;
+	product_price.innerHTML = product.price;
 	add_item.innerHTML = "+";
 	minus_item.innerHTML = "-";
 	delete_item.innerHTML = "x";
+
+	add_item.addEventListener('click', itemAddOne);
+	minus_item.addEventListener('click', itemRemoveOne);
+	delete_item.addEventListener('click', deleteItem);
 
 	cart_detail.appendChild(product_name);
 	cart_detail.appendChild(product_desc);
@@ -236,6 +278,122 @@ function cartEntry(){
 	cart_main.appendChild(cart_item);
 }
 
+function itemAddOne(event){
+	event.preventDefault();
+	event.stopPropagation();
+
+	var sibling = event.target.closest('div').previousSibling;
+	//console.log('sibling className => '+sibling.className);
+	//var itemCount = sibling.getElementsByClassName('.product-count')[0].innerHTML;  //not working
+	var itemCount = sibling.querySelector('.product-count').innerHTML;
+	var itemPrice = sibling.querySelector('.product-price').innerHTML;
+	itemPrice = parseFloat(itemPrice.substring(1));
+	//console.log('itemCount => '+itemCount);
+	//console.log('itemPrice => '+itemPrice);
+	itemPrice = "N" + (itemPrice + (itemPrice/itemCount)).toFixed(2);
+	itemCount = parseFloat(itemCount) + 1;
+	sibling.querySelector('.product-count').innerHTML = itemCount;
+	sibling.querySelector('.product-price').innerHTML = itemPrice;
+	//add to cart
+	//add to local storage
+}
+
+function itemRemoveOne(event){
+	event.preventDefault();
+	event.stopPropagation();
+
+	var sibling = event.target.closest('div').previousSibling;
+	//console.log('sibling className => '+sibling.className);
+	var itemCount = sibling.querySelector('.product-count').innerHTML;
+	var itemPrice = sibling.querySelector('.product-price').innerHTML;
+
+	if (parseInt(itemCount) === 1){
+		deleteItem(event);
+	}
+	else{
+		itemPrice = parseFloat(itemPrice.substring(1));
+		//console.log('itemCount => '+itemCount);
+		//console.log('itemPrice => '+itemPrice);
+		itemPrice = "N" + (itemPrice - (itemPrice/itemCount)).toFixed(2);
+		itemCount = parseFloat(itemCount) - 1;
+		sibling.querySelector('.product-count').innerHTML = itemCount;
+		sibling.querySelector('.product-price').innerHTML = itemPrice;
+		//remove from cart
+		//remove from local storage
+	}
+}
+
+function deleteItem(event){
+	event.preventDefault();
+	event.stopPropagation();
+
+	//var cart_item = document.getElementsByClassName('cart-item')[0]; //targets first .cart-item
+	var targetParent = event.target.parentElement.parentElement;   //targets .cart-item from which event is triggered
+	var cart_main = document.querySelector('.cart-main');
+	//console.log('targetParent => '+targetParent.className);
+	
+	var cart_product_name = targetParent.getElementsByClassName('product-name')[0].innerHTML;
+	//console.log('cart_product_name => '+cart_product_name);
+	var product = cart.filter(product => {   //filter RETURNS an array
+		//console.log('cart_product_name => '+cart_product_name);
+		//console.log('product.name => '+product.name);
+		return product.name === cart_product_name
+	});
+	//console.log('product.name:');
+	//console.log(product);
+
+	if (cart){
+		//console.log(product[0]);
+		if (product[0].name === cart_product_name){
+			var index = cart.indexOf(product[0]);
+			console.log('index => '+index);
+			if (index !== -1){
+				cart.splice(index, 1);
+			}
+			else {
+				cart = [];
+			}	
+		}
+	}
+	else {
+		cart = [];
+	}
+	//console.log('cart:');
+	//console.log(cart);
+
+	//remove from local storage
+	cart_main.removeChild(targetParent);
+}
+
+function emptyCart(){
+	var cart_main = document.querySelector('.cart-main');
+	var cartItems = document.getElementsByClassName('cart-item');
+
+	if (cartItems){
+		//console.log('cartItems => '+typeof(cartItems));  //object
+		//since cartItems is an object-like array use Array.from inorder to be able to use forEach
+		//hence we get error 'forEach is not a function'
+		Array.from(cartItems).forEach(function(cart_item){
+			cart_main.removeChild(cart_item);
+			//console.log('cart_item className => '+cart_item.className);
+		});
+		
+		cart = [];
+		//clear localStorage also
+	}	
+}
+
+function checkoutCart(){
+	console.log(cart);
+}
+
 function saveToLocalStorage(){}
 
 function getFromLocalStorage(){}
+
+
+empty_cart.addEventListener('click', emptyCart);
+checkout.addEventListener('click', checkoutCart);
+
+//window.addEventListener('load', up);
+window.addEventListener('DOMContentLoaded', up);

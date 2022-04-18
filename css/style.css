@@ -144,6 +144,10 @@ main{
 	margin-bottom: 1rem;
 }
 
+.product-desc{
+	text-transform: capitalize;
+}
+
 .cart{
 	width: 80%;
 	/*min-height: 100vh;*/
@@ -153,6 +157,9 @@ main{
 	margin: 1rem 0;
 	padding: 1rem;
 	background-color: rgba(185, 185, 185, 0.8);
+
+	/*transition: all 0.3s linear;
+	transform: translateX(100%);*/
 }
 
 .cart-main,
@@ -198,7 +205,11 @@ main{
 	padding-bottom: 1rem;
 }
 
-.cart-item:not(.cart-item:last-of-type){
+/*.cart-item:not(.cart-item:last-of-type){
+	border-bottom: 0.1rem solid #222222;
+}*/
+
+.cart-item{
 	border-bottom: 0.1rem solid #222222;
 }
 
@@ -286,6 +297,8 @@ main{
 footer{
 	text-align: center;
 	margin-top: 2rem;
+	/*position: sticky;
+	bottom: 0;*/
 }
 
 
