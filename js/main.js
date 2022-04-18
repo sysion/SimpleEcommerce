@@ -4,6 +4,8 @@ import Products from "./Products.js";
 const main = document.querySelector('main');
 const empty_cart = document.querySelector('.empty-cart');
 const checkout = document.querySelector('.checkout');
+const menu_item_cart = document.querySelector('nav ul li:last-child a');  //cart menu item
+const cart_page = document.querySelector('.cart'); 
 const btn_label = "Add To Cart";
 const img_alt = "Image for ";
 let cart = [];
@@ -346,7 +348,8 @@ function deleteItem(event){
 		//console.log(product[0]);
 		if (product[0].name === cart_product_name){
 			var index = cart.indexOf(product[0]);
-			console.log('index => '+index);
+			//console.log('index => '+index);
+
 			if (index !== -1){
 				cart.splice(index, 1);
 			}
@@ -391,6 +394,9 @@ function saveToLocalStorage(){}
 
 function getFromLocalStorage(){}
 
+menu_item_cart.addEventListener('click', function(){
+	cart_page.classList.add('show-cart');
+});
 
 empty_cart.addEventListener('click', emptyCart);
 checkout.addEventListener('click', checkoutCart);

@@ -158,8 +158,12 @@ main{
 	padding: 1rem;
 	background-color: rgba(185, 185, 185, 0.8);
 
-	/*transition: all 0.3s linear;
-	transform: translateX(100%);*/
+	transition: all 0.5s linear;
+	transform: translateX(100%);
+}
+
+.show-cart{
+	transform: translateX(0);
 }
 
 .cart-main,
