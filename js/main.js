@@ -5,6 +5,8 @@ const main = document.querySelector('main');
 const empty_cart = document.querySelector('.empty-cart');
 const checkout = document.querySelector('.checkout');
 const menu_item_cart = document.querySelector('nav ul li:last-child a');  //cart menu item
+const menu_item_cart_span = document.querySelector('nav ul li:last-child a span');
+const menu_item_cart_strong = document.querySelector('nav ul li:last-child a strong');
 const cart_page = document.querySelector('.cart'); 
 const close_cart = document.querySelector('.close-cart');
 const btn_label = "Add To Cart";
@@ -214,6 +216,8 @@ let atc = function addToCart(event){
 		//cart[key] = product;
 		//console.log(product.name);
 		cart.push(product);
+		menu_item_cart_strong.innerHTML = cart.length;
+		menu_item_cart_span.classList.remove('hide-cart-count');
 
 		/*
 		  for objects DON'T use any variable/string in addition to the object in console.log,
@@ -312,6 +316,7 @@ function itemRemoveOne(event){
 
 	if (parseInt(itemCount) === 1){
 		deleteItem(event);
+		//menu_item_cart_span.classList.add('hide-cart-count');
 	}
 	else{
 		itemPrice = parseFloat(itemPrice.substring(1));
@@ -345,7 +350,7 @@ function deleteItem(event){
 	//console.log('product.name:');
 	//console.log(product);
 
-	if (cart){
+	if (cart.length > 1){
 		//console.log(product[0]);
 		if (product[0].name === cart_product_name){
 			var index = cart.indexOf(product[0]);
@@ -353,14 +358,17 @@ function deleteItem(event){
 
 			if (index !== -1){
 				cart.splice(index, 1);
+				menu_item_cart_strong.innerHTML = cart.length;
 			}
 			else {
 				cart = [];
+				menu_item_cart_span.classList.add('hide-cart-count');
 			}	
 		}
 	}
 	else {
 		cart = [];
+		menu_item_cart_span.classList.add('hide-cart-count');
 	}
 	//console.log('cart:');
 	//console.log(cart);
@@ -383,6 +391,7 @@ function emptyCart(){
 		});
 		
 		cart = [];
+		menu_item_cart_span.classList.add('hide-cart-count');
 		//clear localStorage also
 	}	
 }
