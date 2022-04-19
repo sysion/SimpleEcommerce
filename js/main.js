@@ -314,9 +314,6 @@ function cartEntry(product){
 }
 
 function itemAddOne(event){
-	//event.preventDefault();
-	//event.stopPropagation();
-
 	var sibling = event.target.closest('div').previousSibling;
 	//console.log('sibling className => '+sibling.className);
 	//var itemCount = sibling.getElementsByClassName('.product-count')[0].innerHTML;  //not working
@@ -347,9 +344,6 @@ function itemAddOne(event){
 }
 
 function itemRemoveOne(event){
-	//event.preventDefault();
-	//event.stopPropagation();
-
 	var sibling = event.target.closest('div').previousSibling;
 	//console.log('sibling className => '+sibling.className);
 	var itemName = sibling.querySelector('.product-name').innerHTML;
@@ -386,9 +380,6 @@ function itemRemoveOne(event){
 }
 
 function deleteItem(event){
-	//event.preventDefault();
-	//event.stopPropagation();
-
 	//var cart_item = document.getElementsByClassName('cart-item')[0]; //targets first .cart-item
 	var targetParent = event.target.parentElement.parentElement;   //targets .cart-item from which event is triggered
 	var cart_main = document.querySelector('.cart-main');
@@ -475,8 +466,10 @@ function emptyCart(){
 }
 
 function checkoutCart(){
-	//console.log(local_cart);
-	
+	//display summary of purchase e.g. 3 items (total 6 quantities) - COST
+	//payment by card(VISA, MASTER etc)
+	//redirect to Payment Gateway/Service (check if Dummy/Demo API available)
+	//redirect back to own site after successful/failed payment with result
 }
 
 function totalPurchase(cart){
