@@ -14,7 +14,36 @@ const btn_label = "Add To Cart";
 const img_alt = "Image for ";
 let cart = [];
 let local_cart = [];
+const menu_login = document.querySelector('nav ul li:nth-child(3)');
 
+const formHtml = `<div class="form-header">
+					<a href="index.html"><img src="image/logo4.png" alt="Logo image" /></a>
+					<h2>Login</h2>
+				</div>
+
+				<div class="form-input">
+					<label for="email">Email</label>
+					<input type="email" id="email" placeholder="abc@xyz.org" required />
+				</div>
+
+				<div class="form-input">
+					<label for="password">Password</label>
+					<input type="password" id="password" required />
+				</div>
+
+				<div class="form-input show-element">
+					<label for="password-confirm">Confirm Password</label>
+					<input type="password" id="password-confirm" required />
+				</div>
+
+				<div class="form-submit">
+					<button type="submit">Login</button>
+				</div>
+
+				<div class="form-switch">
+					<p for="first-name">No account?</p>
+					<a href="">Sign up</a>
+				</div>`;
 
 /**********************************************************************
 *** This method of standalone function is OK                        ***
@@ -444,24 +473,29 @@ function emptyCart(){
 	var cart_main = document.querySelector('.cart-main');
 	var cartItems = document.getElementsByClassName('cart-item');
 
-	if (cartItems){
-		//console.log('cartItems => '+typeof(cartItems));  //object
-		//since cartItems is an object-like array use Array.from inorder to be able to use forEach
-		//hence we get error 'forEach is not a function'
-		Array.from(cartItems).forEach(function(cart_item){
-			cart_main.removeChild(cart_item);
-			//console.log('cart_item className => '+cart_item.className);
-		});
-		
-		cart = [];
-		local_cart = [];
+	var empty = confirm('Empty All Cart Items?');
 
-		//clear localStorage also
-		saveToLocalStorage('cart', cart);
-		saveToLocalStorage('local_cart', local_cart);
+	if (empty){
 
-		menu_item_cart_span.classList.add('hide-cart-count');
-		cart_total.innerHTML = 'N0.00';
+		if (cartItems){
+			//console.log('cartItems => '+typeof(cartItems));  //object
+			//since cartItems is an object-like array use Array.from inorder to be able to use forEach
+			//hence we get error 'forEach is not a function'
+			Array.from(cartItems).forEach(function(cart_item){
+				cart_main.removeChild(cart_item);
+				//console.log('cart_item className => '+cart_item.className);
+			});
+			
+			cart = [];
+			local_cart = [];
+
+			//clear localStorage also
+			saveToLocalStorage('cart', cart);
+			saveToLocalStorage('local_cart', local_cart);
+
+			menu_item_cart_span.classList.add('hide-cart-count');
+			cart_total.innerHTML = 'N0.00';
+		}
 	}	
 }
 
@@ -502,6 +536,13 @@ close_cart.addEventListener('click', function(){
 
 empty_cart.addEventListener('click', emptyCart);
 checkout.addEventListener('click', checkoutCart);
+
+menu_login.addEventListener('click', handleMenuLogin);
+
+function handleMenuLogin(event) {
+	var name = event.target.innerHTML;
+	console.log(name);
+}
 
 //window.addEventListener('load', up);
 window.addEventListener('DOMContentLoaded', up);

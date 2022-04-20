@@ -323,6 +323,85 @@ main{
 	color: #aa3333;
 }
 
+#login-register{
+	width: 95%;
+	max-width: 40rem;
+	margin: 4rem auto auto auto;
+	padding: 2rem;
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-template-rows: repeat(6, ifr);
+	border: 0.1rem solid #dddddd;
+	border-radius: 1rem;
+}
+
+.form-header{
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+}
+
+.form-header a{
+	display: block;
+	margin-left: 1rem;
+}
+
+.form-header img{
+	width: 4rem;
+	height: 3rem;
+}
+
+.form-header h2{
+	font-weight: bold;
+	margin: 0.5rem auto;
+}
+
+.form-input,
+.form-submit{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	margin: 0.5rem;
+}
+
+.form-input label,
+.form-input input{
+	width: 100%;
+	max-width: 35rem;
+}
+
+.form-input label{
+	font-size: 1.4rem;
+	margin-bottom: 0.2rem;
+}
+
+.form-submit button{
+	width: 20rem;
+	padding: 1rem;
+	border-radius: 1rem;
+}
+
+.form-switch{
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+}
+
+.form-switch p{
+	margin: 1rem 0.5rem 1rem auto;
+}
+
+.form-switch a{
+	margin: 1rem auto 1rem 0.5rem;
+	color: #aa3333;
+}
+
+.show-element{
+	display: none;
+}
+
 footer{
 	text-align: center;
 	margin-top: 2rem;
@@ -386,6 +465,13 @@ footer{
 		width: 40rem;
 		/*min-height: 85vh;*/
 		top: 8rem;
+	}
+
+	#login-register{
+		position: absolute;
+		top: 10rem;
+		left: 40%;
+		/*margin: 10rem auto;*/
 	}
 
 	footer{

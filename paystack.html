@@ -1,0 +1,112 @@
+//https://paystack.com/docs/payments/accept-payments/
+<form id="paymentForm">
+	<div class="form-group">
+		<label for="email">Email Address</label>
+		<input type="email" id="email-address" required />
+	</div>
+	<div class="form-group">
+		<label for="amount">Amount</label>
+		<input type="tel" id="amount" required />
+	</div>
+	<div class="form-group">
+		<label for="first-name">First Name</label>
+		<input type="text" id="first-name" />
+	</div>
+	<div class="form-group">
+		<label for="last-name">Last Name</label>
+		<input type="text" id="last-name" />
+	</div>
+	<div class="form-submit">
+		<button type="submit" onclick="payWithPaystack()"> Pay </button>
+	</div>
+</form>
+<script src="https://js.paystack.co/v1/inline.js"></script>
+const paymentForm = document.getElementById('paymentForm');
+paymentForm.addEventListener("submit", payWithPaystack, false);
+function payWithPaystack(e) {
+	e.preventDefault();
+	let handler = PaystackPop.setup({
+		key: 'pk_test_xxxxxxxxxx', // Replace with your public key
+		email: document.getElementById("email-address").value,
+		amount: document.getElementById("amount").value * 100,
+		// generates a pseudo-unique reference. Please replace with a reference 
+		//you generated. Or remove the line entirely so our API will generate one for you
+		ref: ''+Math.floor((Math.random() * 1000000000) + 1), 
+		
+		// label: "Optional string that replaces customer email"
+		onClose: function(){
+			alert('Window closed.');
+		},
+		callback: function(response){
+			let message = 'Payment complete! Reference: ' + response.reference;
+			alert(message);
+		}
+	});
+	handler.openIframe();
+}
+var paymentForm = document.getElementById('paymentForm');
+paymentForm.addEventListener('submit', payWithPaystack, false);
+function payWithPaystack() {
+  var handler = PaystackPop.setup({
+    key: 'YOUR_PUBLIC_KEY', // Replace with your public key
+    email: document.getElementById('email-address').value,
+    amount: document.getElementById('amount').value * 100, // the amount value is multiplied by 100 to convert to the lowest currency unit
+    currency: 'NGN', // Use GHS for Ghana Cedis or USD for US Dollars
+    ref: 'YOUR_REFERENCE', // Replace with a reference you generated
+    callback: function(response) {
+      //this happens after the payment is completed successfully
+      var reference = response.reference;
+      alert('Payment complete! Reference: ' + reference);
+      // Make an AJAX call to your server with the reference to verify the transaction
+    },
+    onClose: function() {
+      alert('Transaction was not completed, window closed.');
+    },
+  });
+  handler.openIframe();
+}
+callback: function(response){
+  $.ajax({
+    url: 'http://www.yoururl.com/verify_transaction?reference='+ response.reference,
+    method: 'get',
+    success: function (response) {
+      // the transaction status is in response.data.status
+    }
+  });
+}
+callback: function(response) {
+  window.location = "http://www.yoururl.com/verify_transaction.php?reference=" + response.reference;
+};
+// On the redirected page, you can call Paystack's verify endpoint.
+<form action="/save-order-and-pay" method="POST"> 
+<input type="hidden" name="user_email" value="<?php echo $email; ?>"> 
+<input type="hidden" name="amount" value="<?php echo $amount; ?>"> 
+<input type="hidden" name="cartid" value="<?php echo $cartid; ?>"> 
+<button type="submit" name="pay_now" id="pay-now" title="Pay now">Pay now</button>
+</form>
+<?php
+  $url = "https://api.paystack.co/transaction/initialize";
+  $fields = [
+    'email' => "customer@email.com",
+    'amount' => "20000"
+  ];
+  $fields_string = http_build_query($fields);
+  //open connection
+  $ch = curl_init();
+  
+  //set the url, number of POST vars, POST data
+  curl_setopt($ch,CURLOPT_URL, $url);
+  curl_setopt($ch,CURLOPT_POST, true);
+  curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+  curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+    "Authorization: Bearer SECRET_KEY",
+    "Cache-Control: no-cache",
+  ));
+  
+  //So that curl_exec returns the contents of the cURL; rather than echoing it
+  curl_setopt($ch,CURLOPT_RETURNTRANSFER, true); 
+  
+  //execute post
+  $result = curl_exec($ch);
+  echo $result;
+?>
