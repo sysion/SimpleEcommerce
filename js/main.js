@@ -15,10 +15,12 @@ const img_alt = "Image for ";
 let cart = [];
 let local_cart = [];
 const menu_login = document.querySelector('nav ul li:nth-child(3)');
+const form_login_register = document.querySelector('#login-register');
 
 const formHtml = `<div class="form-header">
 					<a href="index.html"><img src="image/logo4.png" alt="Logo image" /></a>
 					<h2>Login</h2>
+					<a href="" class="close-form">X</a>
 				</div>
 
 				<div class="form-input">
@@ -31,7 +33,7 @@ const formHtml = `<div class="form-header">
 					<input type="password" id="password" required />
 				</div>
 
-				<div class="form-input show-element">
+				<div class="form-input hide-element">
 					<label for="password-confirm">Confirm Password</label>
 					<input type="password" id="password-confirm" required />
 				</div>
@@ -42,7 +44,7 @@ const formHtml = `<div class="form-header">
 
 				<div class="form-switch">
 					<p for="first-name">No account?</p>
-					<a href="">Sign up</a>
+					<a href="" class="form-signup">Sign up</a>
 				</div>`;
 
 /**********************************************************************
@@ -540,9 +542,101 @@ checkout.addEventListener('click', checkoutCart);
 menu_login.addEventListener('click', handleMenuLogin);
 
 function handleMenuLogin(event) {
-	var name = event.target.innerHTML;
-	console.log(name);
+	//var name = event.target.innerHTML;
+	//console.log(name);
+	event.preventDefault();
+	event.stopPropagation();
+
+	form_login_register.innerHTML = formHtml;
+	form_login_register.classList.remove('hide-form');
+
+	/* make this declaration after form_login_register.innerHTML = formHtml; to 
+	   avoid "Uncaught TypeError: close_form is undefined"
+	*/
+	var close_form = document.getElementsByClassName('close-form')[0];
+	var signup_form = document.getElementsByClassName('form-signup')[0];
+	var email = document.getElementById('email');
+	var password = document.getElementById('password');
+	var confirm_password = document.getElementById('password-confirm');
+	var button = document.querySelector('.form-submit button');
+	var form_name = form_login_register.name;
+
+	close_form.addEventListener('click', close_action);
+	signup_form.addEventListener('click', signup_action);
+	button.addEventListener('click', login_register_action);
 }
+
+function close_action(event){
+	event.preventDefault();
+	event.stopPropagation();
+
+	//var confirm_password = form_login_register.getElementsByClassName('hide-element')[0];
+	var confirm_password = form_login_register.querySelector('#password-confirm');
+	var button = form_login_register.querySelector('.form-submit button');
+
+	form_login_register.classList.add('hide-form');
+	form_login_register.innerHTML = '';
+
+	/* no need to set this, they are default in template */
+	button.innerHTML = 'Login';
+	confirm_password.classList.add('hide-element');
+	form_login_register.name = 'login-form';
+}
+
+function login_action(event){
+	event.preventDefault();
+	event.stopPropagation();
+
+	//var email = document.getElementById('email');
+	//var password = document.getElementById('password');
+	var e = email.value;
+	var p = password.value;
+	console.log('email => '+e+', password => '+p);
+	console.log('form_login_register name => '+form_login_register.name);
+}
+
+function signup_action(event){
+	event.preventDefault();
+	event.stopPropagation();
+
+	var confirm_password = form_login_register.getElementsByClassName('hide-element')[0];
+	//var confirm_password = form_login_register.getElementsByTagName('input')[2];  //why is this not working???
+	//var confirm_password = document.getElementById('password-confirm');           //why is this not working???
+	//console.log(confirm_password.className);
+	var button = form_login_register.querySelector('.form-submit button');
+
+	form_login_register.name = 'register-form';
+	confirm_password.classList.remove('hide-element');
+	button.innerHTML = 'Register';
+}
+
+function register_action(event){
+	event.preventDefault();
+	event.stopPropagation();
+
+	//var email = document.getElementById('email');
+	//var password = document.getElementById('password');
+	//var confirm_password = form_login_register.getElementsByTagName('password')[2];
+	var confirm_password = form_login_register.querySelector('#password-confirm');
+	var e = email.value;
+	var p = password.value;
+	var cp = confirm_password.value;
+	console.log('email => '+e+', password => '+p+', confirm_password => '+cp);
+	console.log('form_login_register name => '+form_login_register.name);
+}
+
+function login_register_action(event){
+	var form_name = form_login_register.name;
+
+	if (form_name === 'login-form'){
+		login_action(event);
+	}
+	else{
+		register_action(event);
+	}
+}
+
+
 
 //window.addEventListener('load', up);
 window.addEventListener('DOMContentLoaded', up);
