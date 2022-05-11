@@ -334,6 +334,11 @@ main{
 	border: 0.1rem solid #dddddd;
 	border-radius: 1rem;
 	background-color: rgba(185, 185, 185, 0.8);
+
+	position: absolute;
+	top: 10rem;
+	left: 1%;
+	right: 1%;
 }
 
 .form-header{
@@ -502,9 +507,11 @@ footer{
 	}
 
 	#login-register{
-		position: absolute;
+		/*position: absolute;
 		top: 10rem;
-		left: 40%;
+		left: 40%;*/
+		left: 10%;
+		right: 10%;
 		/*margin: 10rem auto;*/
 
 		/*transition: all 0.5s linear;

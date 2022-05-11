@@ -14,6 +14,7 @@ const btn_label = "Add To Cart";
 const img_alt = "Image for ";
 let cart = [];
 let local_cart = [];
+let users = [];
 const menu_login = document.querySelector('nav ul li:nth-child(3)');
 const form_login_register = document.querySelector('#login-register');
 
@@ -183,6 +184,7 @@ let up = function updatePage(){
 	//load previous session from local storage
 	cart = getFromLocalStorage('cart');
 	local_cart = getFromLocalStorage('local_cart');
+	users = getFromLocalStorage('users');
 	//console.log(local_cart);
 
 	if (local_cart.length > 0){
@@ -577,22 +579,9 @@ function close_action(event){
 	form_login_register.classList.add('hide-form');
 	form_login_register.innerHTML = '';
 
-	/* no need to set this, they are default in template */
 	button.innerHTML = 'Login';
 	confirm_password.classList.add('hide-element');
 	form_login_register.name = 'login-form';
-}
-
-function login_action(event){
-	event.preventDefault();
-	event.stopPropagation();
-
-	//var email = document.getElementById('email');
-	//var password = document.getElementById('password');
-	var e = email.value;
-	var p = password.value;
-	console.log('email => '+e+', password => '+p);
-	console.log('form_login_register name => '+form_login_register.name);
 }
 
 function signup_action(event){
@@ -610,19 +599,76 @@ function signup_action(event){
 	button.innerHTML = 'Register';
 }
 
-function register_action(event){
+function login_action(event){
 	event.preventDefault();
 	event.stopPropagation();
 
 	//var email = document.getElementById('email');
 	//var password = document.getElementById('password');
+	var e = email.value;
+	var p = password.value;
+	var close_form = document.getElementsByClassName('close-form')[0];
+	console.log('email => '+e+', password => '+p);
+	console.log('form_login_register name => '+form_login_register.name);
+
+	var valid_user = false;
+
+	users.forEach(function(user){
+		if (user[email.value] === password.value){
+			user['isLogin'] = 1;
+			saveToLocalStorage('users', users);
+			valid_user = true;
+		}
+	});
+
+	if (valid_user){
+		alert('valid user');
+		close_form.click();
+	}
+	else {
+		alert('Login incorrect, check login details and try again');
+	}
+
+	email.value = '';
+	password.value = '';
+}
+
+function register_action(event){
+	event.preventDefault();
+	event.stopPropagation();
+
+	var user = {};
+	//var email = document.getElementById('email');
+	//var password = document.getElementById('password');
 	//var confirm_password = form_login_register.getElementsByTagName('password')[2];
 	var confirm_password = form_login_register.querySelector('#password-confirm');
+	var button = form_login_register.querySelector('.form-submit button');
+	var confirm_password_row = form_login_register.getElementsByClassName('form-input')[2];
 	var e = email.value;
 	var p = password.value;
 	var cp = confirm_password.value;
 	console.log('email => '+e+', password => '+p+', confirm_password => '+cp);
 	console.log('form_login_register name => '+form_login_register.name);
+
+	if (password.value === confirm_password.value && password.value.length >= 4){
+		user[email.value] = password.value;
+		user['isLogin'] = 0;
+
+		users.push(user);
+		console.log(users);
+		saveToLocalStorage('users', users);
+	}
+	else {
+		alert('Passwords don\'t match or password length less than 4.');
+	}
+
+	email.value = '';
+	password.value = '';
+	confirm_password.value = '';
+
+	button.innerHTML = 'Login';
+	confirm_password_row.classList.add('hide-element');
+	form_login_register.name = 'login-form';
 }
 
 function login_register_action(event){
@@ -634,6 +680,16 @@ function login_register_action(event){
 	else{
 		register_action(event);
 	}
+}
+
+function emailValidation(email){
+	//valid email address
+}
+
+function passwordValidation(password1, password2){
+	//minimum length (8)
+	//alphanumerical
+	//same
 }
 
 
