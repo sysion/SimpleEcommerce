@@ -17,6 +17,9 @@ let local_cart = [];
 let users = [];
 const menu_login = document.querySelector('nav ul li:nth-child(3)');
 const form_login_register = document.querySelector('#login-register');
+const cart_checkout = document.querySelector('.cart-checkout');
+const cart_checkout_ul = document.querySelector('.purchases ul');
+const cart_checkout_total = document.querySelector('.cart-checkout p strong');
 
 const formHtml = `<div class="form-header">
 					<a href="index.html"><img src="image/logo4.png" alt="Logo image" /></a>
@@ -504,6 +507,25 @@ function emptyCart(){
 }
 
 function checkoutCart(){
+	//display summary of purchase e.g. 3 items (total 6 quantities) - COST
+	//payment by card(VISA, MASTER etc)
+	//redirect to Payment Gateway/Service (check if Dummy/Demo API available)
+	//redirect back to own site after successful/failed payment with result
+
+	local_cart.forEach(function(item) {
+		var li = document.createElement('li');
+		var item_summary = item['name'] + ' (' + item['desc'] + '), ' + 'qty: ' + item['qty'] + ', ' + 'price: ' + item['price'];
+		li.innerHTML = item_summary;
+		cart_checkout_ul.appendChild(li);
+		//console.log(item_summary);
+	});
+
+	cart_checkout_total.innerHTML = cart_total.innerHTML;
+
+	cart_checkout.classList.remove('hide-form');
+}
+
+function continueCheckout(){
 	//display summary of purchase e.g. 3 items (total 6 quantities) - COST
 	//payment by card(VISA, MASTER etc)
 	//redirect to Payment Gateway/Service (check if Dummy/Demo API available)
