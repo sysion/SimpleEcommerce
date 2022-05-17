@@ -206,7 +206,7 @@ let up = function updatePage(){
 			//console.log("current_user: " + current_user);
 		}
 	});
-	console.log("after reload: " + current_user);
+	//console.log("after reload: " + current_user);
 
 	if (local_cart.length > 0){
 		local_cart.forEach(function(item){
@@ -568,6 +568,16 @@ function continueCheckout(){
 	else{
 		//do paystack stuff here
 		console.log(current_user);
+		//continue_checkout_btn.addEventListener('click', payWithPaystack(event, cart_total.innerHTML));
+		//console.log('purchases: '+cart_checkout_total.innerHTML);
+		//var purchase_amount = parseFloat(cart_checkout_total.innerHTML.substring(1)).toFixed(2);	//ok - but decimal in result
+		//var purchase_amount = cart_checkout_total.innerHTML.substring(1);	//ok - but decimal in result
+		//var purchase_amount = parseFloat(cart_checkout_total.innerHTML.replace(/[^\d\.]*/g, ''));	//ok - but decimal in result
+		var purchase_amount = Math.ceil(cart_checkout_total.innerHTML.substring(1) * 100);
+		//console.log('purchases: '+purchase_amount);
+		//purchase_amount = purchase_amount * 100;
+		//console.log('purchases2: '+purchase_amount);
+		payWithPaystack(purchase_amount);
 	}
 }
 
@@ -609,6 +619,7 @@ checkout.addEventListener('click', checkoutCart);
 menu_login.addEventListener('click', handleMenuLogin);
 
 continue_checkout_btn.addEventListener('click', continueCheckout);
+//continue_checkout_btn.addEventListener('click', payWithPaystack(cart_total.innerHTML));
 
 function handleMenuLogin(event) {
 	//var name = event.target.innerHTML;
@@ -820,6 +831,42 @@ function readCookie(name){
 
 function eraseCookie(name){
     createCookie(name,"",-1);
+}
+
+//function payWithPaystack(event, amt){
+function payWithPaystack(amt){
+	//event.preventDefault();
+
+	var handler = PaystackPop.setup({
+		key: 'pk_test_a3ca3bbb0e1fda548bb0f946d70a71c053b3937c',
+
+		//must be a valid email
+		email: 'sysionng@gmail.com',	
+
+		//the amount value is multiplied by 100 to convert to the lowest currency unit
+		//amount: amt * 100, 
+		amount: amt,
+		currency: 'NGN',
+
+		//generates a pseudo-unique reference. Please replace with a reference you generated. 
+		//Or remove the line entirely so our API will generate one for you
+		ref: ''+Math.floor((Math.random() * 1000000000) + 1), 
+		callback: function(response) {
+			//this happens after the payment is completed successfully
+			var reference = response.reference;
+			alert('Payment complete! Reference: ' + reference);
+			//Make an AJAX call to your server with the reference to verify the transaction
+
+			cart = [];
+			local_cart = [];
+		},
+		onClose: function() {
+			alert('Transaction was not completed, window closed.');
+		},
+	});
+
+	cart_checkout.classList.add('hide-form');
+	handler.openIframe();
 }
 
 
