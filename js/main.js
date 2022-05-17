@@ -59,84 +59,6 @@ const formHtml = `<div class="form-header">
 				</div>`;
 
 /**********************************************************************
-*** This method of standalone function is OK                        ***
-***********************************************************************
-function createSection(key, product){
-	var section = document.createElement('section');
-	var section_title = document.createElement('h2');
-	var section_img = document.createElement('img');
-	var section_desc = document.createElement('p');
-	var section_price = document.createElement('p');
-	var section_button = document.createElement('button');
-
-	section.classList.add('product-item');
-	section_title.classList.add('product-name');
-	section_img.classList.add('product-img');
-	section_desc.classList.add('product-desc');
-	section_price.classList.add('product-price');
-	section_button.classList.add('add');
-
-	section_title.innerHTML = product.name;
-	section_img.src = product.img;
-	//section_img.alt = img_alt + product.name;
-	section_img.alt = img_alt + product.name + '_' + key;
-	//section_img.setAttribute('src', product.img);               //ok also
-	//section_img.setAttribute('alt', img_alt + product.name);    //ok also
-	section_desc.innerHTML = product.desc;
-	section_price.innerHTML = "N" + product.price;
-	section_button.innerHTML = btn_label;
-	section_button.addEventListener('click', addToCart);
-
-	section.appendChild(section_title);
-	section.appendChild(section_img);
-	section.appendChild(section_desc);
-	section.appendChild(section_price);
-	section.appendChild(section_button);
-
-	main.appendChild(section);
-}
-
-function updatePage(){
-	for (let key in Products){
-		createSection(key, Products[key]);
-	}
-}
-
-window.addEventListener('DOMContentLoaded', updatePage);
-
-//using event here because this is serving as callback for addEventListener
-function addToCart(event){  
-	var parent = event.target.closest('section'); 
-	//console.log(parent);
-	var product = {};
-
-	if (parent.className === 'product-item'){
-		********************************************************************************
-		** using this method because element is dynamically created and 
-		** getElementBy{*}/getElementsBy{*} and
-		** document.querySelector/document.querySelectorAll are not working
-		********************************************************************************
-		var children = parent.children;      
-		var title = children[0].innerHTML;
-		var img = '.' + children[1].src.split(window.location.origin )[1];
-		var key = children[1].alt.split('_')[1];
-		var desc = children[2].innerHTML;
-		var price = children[3].innerHTML;
-
-		console.log("title => "+title);
-		console.log("img => "+img);
-		console.log("key => "+key);
-		console.log("desc => "+desc);
-		console.log("price => "+price);
-
-		product[key] = {name: title, img: img, desc: desc, price: price};
-		//console.log("product_key => "+product[key]+", product_value => "+product.value);
-	}
-}
-*/
-
-
-/**********************************************************************
 *** This method of assign functions to variables is OK              ***
 ***********************************************************************/
 let cs = function createSection(key, product){
@@ -156,10 +78,7 @@ let cs = function createSection(key, product){
 	
 	section_title.innerHTML = product.name;
 	section_img.src = product.img;
-	//section_img.alt = img_alt + product.name;
 	section_img.alt = img_alt + product.name + '_' + key;
-	//section_img.setAttribute('src', product.img);               //ok also
-	//section_img.setAttribute('alt', img_alt + product.name);    //ok also
 	section_desc.innerHTML = product.desc;
 	section_price.innerHTML = "N" + product.price;
 	section_button.innerHTML = btn_label;
@@ -178,35 +97,18 @@ let cs = function createSection(key, product){
 let up = function updatePage(){
 	for (let key in Products){
 		cs(key, Products[key]);
-		
-		/*
-		  for objects DON'T use any variable/string in addition to the object in console.log,
-		  it will RESULT in [object Object] result as in below statement:
-
-			console.log('Products['+key+'] => '+Products[key]);
-		*/
-		//BOTH Methods below are OK for console.log OBJECTS
-		//console.log(Products[key]);  //ALWAYS console.log objects alone like this OR         
-		//console.log("product => "+JSON.stringify(Products[key]));		//JSON.stringify(object)
-		
 	}
 
 	//load previous session from local storage
 	cart = getFromLocalStorage('cart');
 	local_cart = getFromLocalStorage('local_cart');
-	//console.log(local_cart);
 	users = getFromLocalStorage('users');
 	
 	users.forEach(user => {	//arrow function variant
 		if (user['isLogin'] === 1){
-			//console.log(Object.keys(user)[0]);	//ok
-			//const { c_user, is_login } = user;	//object destructuring
-			//console.log("c_user: " + c_user);
 			current_user = Object.keys(user)[0];
-			//console.log("current_user: " + current_user);
 		}
 	});
-	//console.log("after reload: " + current_user);
 
 	if (local_cart.length > 0){
 		local_cart.forEach(function(item){
@@ -218,47 +120,19 @@ let up = function updatePage(){
 	}
 }
 
-
-/********************************************************************************
- document.querySelector/document.querySelectorAll do not reference elements added 
- dynamically to the DOM by javascript - use other traditionally supported methods
- like getElementsBy{*} - https://codepen.io/VAggrippino/pen/draJzJ
-
-let buttons = document.querySelectorAll('section > button'); 
-********************************************************************************
-let buttons = document.getElementsByClassName('add');      //not working
-//let buttons = document.getElementsByTagName('img');       //not working
-console.log("num_of_buttons => "+buttons.length);         
-
-buttons.forEach(function(button){
-	console.log('hi');
-	button.addEventListener('click', addToCart);
-});
-
-for (var i=0; i<buttons.length; i++){
-	console.log(buttons[i].width);
-}
-*********************************************************************************/
-
 //using event here because this is serving as callback for addEventListener
 let atc = function addToCart(event){  
 	var parent = event.target.closest('section'); 
-	//console.log(parent);
-	//var product = {};
 	var canAdd = true;
 
 	if (cart){
 		var cart_product_name = parent.getElementsByClassName('product-name')[0].innerHTML;
-		//console.log('sibling => '+cart_product_name);
 		var pn = cart.forEach(product => {
 			if (product.name === cart_product_name){
 				canAdd = false;
 			}
 		});
-		//console.log('pn:');
-		//console.log(pn);
 	}
-	//console.log('canAdd => '+canAdd);
 
 	if (parent.className === 'product-item' && canAdd){
 		/********************************************************************************
@@ -273,19 +147,8 @@ let atc = function addToCart(event){
 		var desc = children[2].innerHTML;
 		var price = children[3].innerHTML;
 
-		/*console.log("name => "+name);
-		console.log("img => "+img);
-		console.log("key => "+key);
-		console.log("desc => "+desc);
-		console.log("price => "+price);*/
-		//cartEntry();
-
-		//var id = 'key_' + key;
-		//var product = {key: {name: name, img: img, desc: desc, price: price}};
 		var product = {name: name, img: img, desc: desc, price: price};
 		var local_product = {name: name, img: img, desc: desc, price: price, qty: 1};
-		//cart[key] = product;
-		//console.log(product.name);
 		cart.push(product);
 		local_cart.push(local_product);
 		menu_item_cart_strong.innerHTML = cart.length;
@@ -296,15 +159,6 @@ let atc = function addToCart(event){
 		saveToLocalStorage('cart', cart);
 		saveToLocalStorage('local_cart', local_cart);
 
-		/*
-		  for objects DON'T use any variable/string in addition to the object in console.log,
-		  it will RESULT in [object Object] result as in below statement:
-
-			console.log("product => "+product);
-		*/
-		//BOTH Methods below are OK for console.log OBJECTS
-		//console.log(product);	//ALWAYS console.log objects alone like this OR         
-		//console.log("product => "+JSON.stringify(product));		//JSON.stringify(object)
 		cartEntry(product);
 	}
 }
@@ -369,14 +223,10 @@ function cartEntry(product){
 
 function itemAddOne(event){
 	var sibling = event.target.closest('div').previousSibling;
-	//console.log('sibling className => '+sibling.className);
-	//var itemCount = sibling.getElementsByClassName('.product-count')[0].innerHTML;  //not working
 	var itemName = sibling.querySelector('.product-name').innerHTML;
 	var itemCount = sibling.querySelector('.product-count').innerHTML;
 	var itemPrice = sibling.querySelector('.product-price').innerHTML;
 	itemPrice = parseFloat(itemPrice.substring(1));
-	//console.log('itemCount => '+itemCount);
-	//console.log('itemPrice => '+itemPrice);
 	itemPrice = "N" + (itemPrice + (itemPrice/itemCount)).toFixed(2);
 	itemCount = parseFloat(itemCount) + 1;
 	sibling.querySelector('.product-count').innerHTML = itemCount;
@@ -390,7 +240,6 @@ function itemAddOne(event){
 			return;
 		}
 	});
-	//console.log(local_cart);
 
 	//add to local storage
 	totalPurchase(local_cart);
@@ -399,19 +248,15 @@ function itemAddOne(event){
 
 function itemRemoveOne(event){
 	var sibling = event.target.closest('div').previousSibling;
-	//console.log('sibling className => '+sibling.className);
 	var itemName = sibling.querySelector('.product-name').innerHTML;
 	var itemCount = sibling.querySelector('.product-count').innerHTML;
 	var itemPrice = sibling.querySelector('.product-price').innerHTML;
 
 	if (parseInt(itemCount) === 1){
 		deleteItem(event);
-		//menu_item_cart_span.classList.add('hide-cart-count');
 	}
 	else{
 		itemPrice = parseFloat(itemPrice.substring(1));
-		//console.log('itemCount => '+itemCount);
-		//console.log('itemPrice => '+itemPrice);
 		itemPrice = "N" + (itemPrice - (itemPrice/itemCount)).toFixed(2);
 		itemCount = parseFloat(itemCount) - 1;
 		sibling.querySelector('.product-count').innerHTML = itemCount;
@@ -425,7 +270,6 @@ function itemRemoveOne(event){
 				return;
 			}
 		});
-		//console.log(local_cart);
 
 		//remove from local storage
 		totalPurchase(local_cart);
@@ -434,27 +278,19 @@ function itemRemoveOne(event){
 }
 
 function deleteItem(event){
-	//var cart_item = document.getElementsByClassName('cart-item')[0]; //targets first .cart-item
 	var targetParent = event.target.parentElement.parentElement;   //targets .cart-item from which event is triggered
 	var cart_main = document.querySelector('.cart-main');
-	//console.log('targetParent => '+targetParent.className);
 	
 	//remove from cart and local_cart
 	var cart_product_name = targetParent.getElementsByClassName('product-name')[0].innerHTML;
-	//console.log('cart_product_name => '+cart_product_name);
 	var product = cart.filter(product => {   //filter RETURNS an array
-		//console.log('cart_product_name => '+cart_product_name);
-		//console.log('product.name => '+product.name);
 		return product.name === cart_product_name
 	});
-	//console.log('product.name:');
-	//console.log(product);
 
 	if (cart.length > 1){
 		//console.log(product[0]);
 		if (product[0].name === cart_product_name){
 			var index = cart.indexOf(product[0]);
-			//console.log('index => '+index);
 
 			if (index !== -1){
 				cart.splice(index, 1);
@@ -488,8 +324,6 @@ function deleteItem(event){
 		menu_item_cart_span.classList.add('hide-cart-count');
 		cart_total.innerHTML = 'N0.00';
 	}
-	//console.log('cart:');
-	//console.log(cart);
 
 	cart_main.removeChild(targetParent);
 }
@@ -503,12 +337,8 @@ function emptyCart(){
 	if (empty){
 
 		if (cartItems){
-			//console.log('cartItems => '+typeof(cartItems));  //object
-			//since cartItems is an object-like array use Array.from inorder to be able to use forEach
-			//hence we get error 'forEach is not a function'
 			Array.from(cartItems).forEach(function(cart_item){
 				cart_main.removeChild(cart_item);
-				//console.log('cart_item className => '+cart_item.className);
 			});
 			
 			cart = [];
@@ -535,7 +365,6 @@ function checkoutCart(){
 		var item_summary = item['name'] + ' (' + item['desc'] + '), ' + 'qty: ' + item['qty'] + ', ' + 'price: ' + item['price'];
 		li.innerHTML = item_summary;
 		cart_checkout_ul.appendChild(li);
-		//console.log(item_summary);
 	});
 
 	cart_checkout_total.innerHTML = cart_total.innerHTML;
@@ -561,22 +390,13 @@ function continueCheckout(){
 
 	if (!user_is_login){
 		cancel_checkout_btn.click();
-		//form_login_register.classList.remove('hide-form');
 		alert('You need to login to do this');
 		menu_login.click();
 	}
 	else{
 		//do paystack stuff here
 		console.log(current_user);
-		//continue_checkout_btn.addEventListener('click', payWithPaystack(event, cart_total.innerHTML));
-		//console.log('purchases: '+cart_checkout_total.innerHTML);
-		//var purchase_amount = parseFloat(cart_checkout_total.innerHTML.substring(1)).toFixed(2);	//ok - but decimal in result
-		//var purchase_amount = cart_checkout_total.innerHTML.substring(1);	//ok - but decimal in result
-		//var purchase_amount = parseFloat(cart_checkout_total.innerHTML.replace(/[^\d\.]*/g, ''));	//ok - but decimal in result
 		var purchase_amount = Math.ceil(cart_checkout_total.innerHTML.substring(1) * 100);
-		//console.log('purchases: '+purchase_amount);
-		//purchase_amount = purchase_amount * 100;
-		//console.log('purchases2: '+purchase_amount);
 		payWithPaystack(purchase_amount);
 	}
 }
@@ -586,7 +406,6 @@ function totalPurchase(cart){
 
 	local_cart.forEach(function(cartItem){
 		total = (parseFloat(total) + parseFloat(cartItem.price.substring(1))).toFixed(2);
-		//console.log('total => '+total);
 	});
 
 	total = 'N' + total;
@@ -619,16 +438,12 @@ checkout.addEventListener('click', checkoutCart);
 menu_login.addEventListener('click', handleMenuLogin);
 
 continue_checkout_btn.addEventListener('click', continueCheckout);
-//continue_checkout_btn.addEventListener('click', payWithPaystack(cart_total.innerHTML));
 
 function handleMenuLogin(event) {
-	//var name = event.target.innerHTML;
-	//console.log(name);
 	event.preventDefault();
 	event.stopPropagation();
 
 	form_login_register.innerHTML = formHtml;	//ok if no element in form_login_register
-	//form_login_register.appendChild(formHtml);	//nok - formHtml MUST be an html element
 	form_login_register.classList.remove('hide-form');
 
 	/* make this declaration after form_login_register.innerHTML = formHtml; to 
@@ -653,7 +468,6 @@ function close_action(event){
 	event.preventDefault();
 	event.stopPropagation();
 
-	//var confirm_password = form_login_register.getElementsByClassName('hide-element')[0];
 	var confirm_password = form_login_register.querySelector('#password-confirm');
 	var button = form_login_register.querySelector('.form-submit button');
 
@@ -670,9 +484,6 @@ function signup_action(event){
 	event.stopPropagation();
 
 	var confirm_password = form_login_register.getElementsByClassName('hide-element')[0];
-	//var confirm_password = form_login_register.getElementsByTagName('input')[2];  //why is this not working???
-	//var confirm_password = document.getElementById('password-confirm');           //why is this not working???
-	//console.log(confirm_password.className);
 	var form_switch = form_login_register.getElementsByClassName('form-switch')[0];
 	var button = form_login_register.querySelector('.form-submit button');
 
@@ -686,8 +497,6 @@ function login_action(event){
 	event.preventDefault();
 	event.stopPropagation();
 
-	//var email = document.getElementById('email');
-	//var password = document.getElementById('password');
 	var e = email.value;
 	var p = password.value;
 	var close_form = document.getElementsByClassName('close-form')[0];
@@ -702,17 +511,8 @@ function login_action(event){
 			saveToLocalStorage('users', users);
 			valid_user = true;
 			current_user = email.value;
-			//saveToLocalStorage('current_user', current_user);
 		}
 	});
-
-	/*if (valid_user){
-		alert('valid user');
-		//close_form.click();
-	}
-	else {
-		alert('Login incorrect, check login details and try again');
-	}*/
 
 	if (!valid_user){
 		alert('Login incorrect, check login details and try again');
@@ -729,9 +529,6 @@ function register_action(event){
 	event.stopPropagation();
 
 	var user = {};   //user object => {email key: password, isLogin key: 0}
-	//var email = document.getElementById('email');
-	//var password = document.getElementById('password');
-	//var confirm_password = form_login_register.getElementsByTagName('password')[2];
 	var confirm_password = form_login_register.querySelector('#password-confirm');
 	var button = form_login_register.querySelector('.form-submit button');
 	var confirm_password_row = form_login_register.getElementsByClassName('form-input')[2];
@@ -798,45 +595,7 @@ function passwordValidation(password1, password2){
 	//same
 }
 
-function createCookie(name, value, days){
-    var expires = "";
-
-    if (days) {
-		var date = new Date();
-		date.setTime(date.getTime()+(days*24*60*60*1000));
-		expires = "; expires="+date.toGMTString();
-    }
-
-    document.cookie = name+"="+value+expires+"; path=/";
-}
-
-function readCookie(name){
-    var nameEQ = name + "=";
-    var ca = document.cookie.split(';');
-
-    for(var i=0;i < ca.length;i++){
-        var c = ca[i];
-
-        while (c.charAt(0)==' '){
-            c = c.substring(1,c.length);
-        }
-
-        if (c.indexOf(nameEQ) == 0){
-            return c.substring(nameEQ.length,c.length);
-        }
-    }
-
-    return null;
-}
-
-function eraseCookie(name){
-    createCookie(name,"",-1);
-}
-
-//function payWithPaystack(event, amt){
 function payWithPaystack(amt){
-	//event.preventDefault();
-
 	var handler = PaystackPop.setup({
 		key: 'pk_test_a3ca3bbb0e1fda548bb0f946d70a71c053b3937c',
 
@@ -844,7 +603,6 @@ function payWithPaystack(amt){
 		email: 'sysionng@gmail.com',	
 
 		//the amount value is multiplied by 100 to convert to the lowest currency unit
-		//amount: amt * 100, 
 		amount: amt,
 		currency: 'NGN',
 
@@ -859,6 +617,10 @@ function payWithPaystack(amt){
 
 			cart = [];
 			local_cart = [];
+			saveToLocalStorage('cart', cart);
+			saveToLocalStorage('local_cart', local_cart);
+
+			window.location.href = 'http://127.0.0.1:8080/';
 		},
 		onClose: function() {
 			alert('Transaction was not completed, window closed.');
@@ -868,8 +630,6 @@ function payWithPaystack(amt){
 	cart_checkout.classList.add('hide-form');
 	handler.openIframe();
 }
-
-
 
 //window.addEventListener('load', up);
 window.addEventListener('DOMContentLoaded', up);

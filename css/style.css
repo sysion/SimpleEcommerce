@@ -104,7 +104,6 @@ nav ul li a span strong{
 	left: 0.5rem;
 	top: -0.5rem;
 	font-size: 1.5rem;
-	/*color: #aa3333;*/
 	color: #ff0000;
 	font-weight: bold;
 }
@@ -118,8 +117,6 @@ main{
 	grid-gap: 0.5rem;									/* grid-row-gap: 0.5rem; grid-column-gap: 0.5rem; */
 	grid-template-rows: auto;							/* row height will be dynamic; OR grid-auto-rows: minmax(100px, auto);*/
 	grid-template-columns: 1fr;
-	/*grid-template-areas: 
-		"section";*/
 	padding: 2rem;
 
 	grid-auto-columns: max-content;					/* help smooth out certain instances when doing more than the minimum */
@@ -127,7 +124,6 @@ main{
 }
 
 .product-item{
-	/*grid-area: section;*/
 	grid-column: span 1;
 	grid-row: span 1;
 	margin: 0.2rem;
@@ -152,16 +148,7 @@ main{
 	margin: 1rem auto;
 	padding: 1rem;
 	border-radius: 1rem;
-	/*border: none;
-	outline: none;
-	cursor: pointer;
-	background-color: #dddddd;*/
 }
-
-/*.product-item .add:focus{
-	border: none;
-	outline: none;
-}*/
 
 .product-item h2,
 .product-item img,
@@ -175,14 +162,12 @@ main{
 
 .cart{
 	width: 80%;
-	/*min-height: 100vh;*/
 	position: absolute;
 	top: 0;
 	right: 0;
 	margin: 1rem 0;
 	padding: 1rem;
 	background-color: rgba(185, 185, 185, 0.8);
-
 	transition: all 0.5s linear;
 	transform: translateX(100%);
 }
@@ -234,10 +219,6 @@ main{
 	padding-bottom: 1rem;
 }
 
-/*.cart-item:not(.cart-item:last-of-type){
-	border-bottom: 0.1rem solid #222222;
-}*/
-
 .cart-item{
 	border-bottom: 0.1rem solid #222222;
 }
@@ -266,16 +247,7 @@ main{
 	font-weight: bold;
 	border-radius: 0.5rem;
 	margin-bottom: 0.3rem;
-	/*border: none;
-	outline: none;
-	cursor: pointer;
-	background-color: #dedede;*/
 }
-
-/*.cart-number-btn:focus{
-	border: none;
-	outline: none;
-}*/
 
 .cart-footer{}
 
@@ -291,17 +263,7 @@ main{
 	border-radius: 0.5rem;
 	font-size: 1.4rem;
 	font-weight: bold;
-	/*border: none;
-	outline: none;
-	cursor: pointer;
-	background-color: #dedede;*/
 }
-
-/*.empty-cart:focus,
-.checkout:focus{
-	border: none;
-	outline: none;
-}*/
 
 .checkout{
 
@@ -329,12 +291,8 @@ main{
 	left: 1%;
 	right: 1%;
 	width: 95%;
-	/*max-width: 60rem;*/
 	margin: 4rem auto auto auto;
 	padding: 2rem;
-	/*display: grid;
-	grid-template-columns: 1fr;
-	grid-template-rows: repeat(6, 1fr);*/
 	border: 0.1rem solid #dddddd;
 	border-radius: 1rem;
 	background-color: rgba(185, 185, 185, 0.8);
@@ -423,7 +381,6 @@ main{
 	font-weight: bold;
 	color: #ffffff;
 	margin: 0.5rem;
-	/*padding: 1rem;*/
 	border: 0.1rem solid #ffffff;
 	border-radius: 50%;
 	text-align: center;
@@ -500,12 +457,6 @@ main{
 	visibility: hidden;
 	display: none;
 	flex: 1 1 100%;
-	/*width: 0;
-	height: 0;
-	margin: 0;
-	padding: 0;
-	font-size: 0;
-	overflow: hidden;*/
 }
 
 .hide-form{
@@ -516,8 +467,6 @@ main{
 footer{
 	text-align: center;
 	margin-top: 2rem;
-	/*position: sticky;
-	bottom: 0;*/
 }
 
 
@@ -544,27 +493,11 @@ footer{
 		background: none;
 	}
 
-	/*nav ul li a{
-		display: block;
-		width: 15rem;
-		height: 3rem;
-		margin: 0.5rem;
-		padding: 0.5rem;
-		font-size: 2rem;
-		text-align: center;
-		text-transform: uppercase;
-	}*/
-
 	nav ul li a:hover{
 		border-bottom: 0.3rem solid #36ef36;
 	}
 
 	main{
-		/*grid-template-columns: 1fr 1fr 1fr 1fr;		* each grid width should be 300px hence 4*300px=1200px */
-		/*grid-template-columns: repeat(auto-fill, minmax(30rem, 1fr));*/
-		/*grid-template-columns: repeat(auto-fit, 30rem); * grid with 30rem column width and wrap to next row when no room */
-		/*grid-template-columns: repeat(6, 1fr); */ 
-		/*grid-template-columns: repeat(auto-fit, minmax(24rem, 1fr));  - this fit grid-items to the available space even if only one item*/
 		grid-template-columns: repeat(auto-fill, minmax(24rem, 1fr));
 	}
 
@@ -574,7 +507,6 @@ footer{
 
 	.cart{
 		width: 40rem;
-		/*min-height: 85vh;*/
 		top: 8rem;
 	}
 
@@ -596,15 +528,8 @@ footer{
 	}
 
 	#login-register{
-		/*position: absolute;
-		top: 10rem;
-		left: 40%;*/
 		left: 10%;
 		right: 10%;
-		/*margin: 10rem auto;*/
-
-		/*transition: all 0.5s linear;
-		transform: translateX(250%);*/
 	}
 
 	footer{
@@ -612,34 +537,4 @@ footer{
 		padding: 2rem;
 	}
 
-
-
-
-
-
 }
-
-
-/*
-grid with columns (20rem wide in this example) that are arranged automatically 
-in the available space, wrapping to the next row when there’s not enough room.
-.grid {
-display: grid;
-gap: 1rem;
-grid-template-columns: repeat(auto-fit, 20rem);
-}
-
-where 1 / -1 means “start in column 1, and span every column up to the very last one.”
-.fullwidth {
-grid-column: 1 / -1;
-}
-
-
-.grid {
-grid-auto-flow: dense;
-}
-*/
-
-
-
-
