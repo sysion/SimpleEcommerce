@@ -20,6 +20,9 @@ const form_login_register = document.querySelector('#login-register');
 const cart_checkout = document.querySelector('.cart-checkout');
 const cart_checkout_ul = document.querySelector('.purchases ul');
 const cart_checkout_total = document.querySelector('.cart-checkout p strong');
+const cancel_checkout_btn = document.querySelector('.cancel-checkout-btn');
+const continue_checkout_btn = document.querySelector('.continue-checkout-btn');
+var current_user = 'nobody';
 
 const formHtml = `<div class="form-header">
 					<a href="index.html"><img src="image/logo4.png" alt="Logo image" /></a>
@@ -47,8 +50,12 @@ const formHtml = `<div class="form-header">
 				</div>
 
 				<div class="form-switch">
-					<p for="first-name">No account?</p>
-					<a href="" class="form-signup">Sign up</a>
+					<p>No account?</p>
+					<a href="#" class="form-signup">Sign up</a>
+				</div>
+
+				<div class="form-logout">
+					<a href="#" class="form-logout-link">Log Out</a>
 				</div>`;
 
 /**********************************************************************
@@ -187,8 +194,19 @@ let up = function updatePage(){
 	//load previous session from local storage
 	cart = getFromLocalStorage('cart');
 	local_cart = getFromLocalStorage('local_cart');
-	users = getFromLocalStorage('users');
 	//console.log(local_cart);
+	users = getFromLocalStorage('users');
+	
+	users.forEach(user => {	//arrow function variant
+		if (user['isLogin'] === 1){
+			//console.log(Object.keys(user)[0]);	//ok
+			//const { c_user, is_login } = user;	//object destructuring
+			//console.log("c_user: " + c_user);
+			current_user = Object.keys(user)[0];
+			//console.log("current_user: " + current_user);
+		}
+	});
+	console.log("after reload: " + current_user);
 
 	if (local_cart.length > 0){
 		local_cart.forEach(function(item){
@@ -511,7 +529,7 @@ function checkoutCart(){
 	//payment by card(VISA, MASTER etc)
 	//redirect to Payment Gateway/Service (check if Dummy/Demo API available)
 	//redirect back to own site after successful/failed payment with result
-
+	cart_checkout_ul.innerHTML = '';
 	local_cart.forEach(function(item) {
 		var li = document.createElement('li');
 		var item_summary = item['name'] + ' (' + item['desc'] + '), ' + 'qty: ' + item['qty'] + ', ' + 'price: ' + item['price'];
@@ -521,7 +539,7 @@ function checkoutCart(){
 	});
 
 	cart_checkout_total.innerHTML = cart_total.innerHTML;
-
+	cart_page.classList.remove('show-cart');
 	cart_checkout.classList.remove('hide-form');
 }
 
@@ -530,6 +548,27 @@ function continueCheckout(){
 	//payment by card(VISA, MASTER etc)
 	//redirect to Payment Gateway/Service (check if Dummy/Demo API available)
 	//redirect back to own site after successful/failed payment with result
+
+	users = getFromLocalStorage('users');
+	var user_is_login = false;
+
+	users.forEach(user => {	//arrow function variant
+		if (user[current_user] && user['isLogin'] === 1){
+			console.log(user);
+			user_is_login = true;
+		}
+	});
+
+	if (!user_is_login){
+		cancel_checkout_btn.click();
+		//form_login_register.classList.remove('hide-form');
+		alert('You need to login to do this');
+		menu_login.click();
+	}
+	else{
+		//do paystack stuff here
+		console.log(current_user);
+	}
 }
 
 function totalPurchase(cart){
@@ -560,10 +599,16 @@ close_cart.addEventListener('click', function(){
 	cart_page.classList.remove('show-cart');
 });
 
+cancel_checkout_btn.addEventListener('click', function(){
+	cart_checkout.classList.add('hide-form');
+});
+
 empty_cart.addEventListener('click', emptyCart);
 checkout.addEventListener('click', checkoutCart);
 
 menu_login.addEventListener('click', handleMenuLogin);
+
+continue_checkout_btn.addEventListener('click', continueCheckout);
 
 function handleMenuLogin(event) {
 	//var name = event.target.innerHTML;
@@ -571,7 +616,8 @@ function handleMenuLogin(event) {
 	event.preventDefault();
 	event.stopPropagation();
 
-	form_login_register.innerHTML = formHtml;
+	form_login_register.innerHTML = formHtml;	//ok if no element in form_login_register
+	//form_login_register.appendChild(formHtml);	//nok - formHtml MUST be an html element
 	form_login_register.classList.remove('hide-form');
 
 	/* make this declaration after form_login_register.innerHTML = formHtml; to 
@@ -579,6 +625,7 @@ function handleMenuLogin(event) {
 	*/
 	var close_form = document.getElementsByClassName('close-form')[0];
 	var signup_form = document.getElementsByClassName('form-signup')[0];
+	var logout_action_link = document.getElementsByClassName('form-logout-link')[0];
 	var email = document.getElementById('email');
 	var password = document.getElementById('password');
 	var confirm_password = document.getElementById('password-confirm');
@@ -587,6 +634,7 @@ function handleMenuLogin(event) {
 
 	close_form.addEventListener('click', close_action);
 	signup_form.addEventListener('click', signup_action);
+	logout_action_link.addEventListener('click', logout_action);
 	button.addEventListener('click', login_register_action);
 }
 
@@ -614,11 +662,13 @@ function signup_action(event){
 	//var confirm_password = form_login_register.getElementsByTagName('input')[2];  //why is this not working???
 	//var confirm_password = document.getElementById('password-confirm');           //why is this not working???
 	//console.log(confirm_password.className);
+	var form_switch = form_login_register.getElementsByClassName('form-switch')[0];
 	var button = form_login_register.querySelector('.form-submit button');
 
 	form_login_register.name = 'register-form';
 	confirm_password.classList.remove('hide-element');
 	button.innerHTML = 'Register';
+	form_switch.classList.add('hide-form');
 }
 
 function login_action(event){
@@ -640,26 +690,34 @@ function login_action(event){
 			user['isLogin'] = 1;
 			saveToLocalStorage('users', users);
 			valid_user = true;
+			current_user = email.value;
+			//saveToLocalStorage('current_user', current_user);
 		}
 	});
 
-	if (valid_user){
+	/*if (valid_user){
 		alert('valid user');
-		close_form.click();
+		//close_form.click();
 	}
 	else {
+		alert('Login incorrect, check login details and try again');
+	}*/
+
+	if (!valid_user){
 		alert('Login incorrect, check login details and try again');
 	}
 
 	email.value = '';
 	password.value = '';
+
+	close_form.click();
 }
 
 function register_action(event){
 	event.preventDefault();
 	event.stopPropagation();
 
-	var user = {};
+	var user = {};   //user object => {email key: password, isLogin key: 0}
 	//var email = document.getElementById('email');
 	//var password = document.getElementById('password');
 	//var confirm_password = form_login_register.getElementsByTagName('password')[2];
@@ -691,6 +749,10 @@ function register_action(event){
 	button.innerHTML = 'Login';
 	confirm_password_row.classList.add('hide-element');
 	form_login_register.name = 'login-form';
+
+
+	var form_switch = form_login_register.getElementsByClassName('form-switch')[0];
+	form_switch.classList.remove('hide-form');
 }
 
 function login_register_action(event){
@@ -704,6 +766,17 @@ function login_register_action(event){
 	}
 }
 
+function logout_action(){
+	var close_form = document.getElementsByClassName('close-form')[0];
+	users = getFromLocalStorage('users');
+
+	users.forEach(user => {	//arrow function variant
+		user['isLogin'] = 0;
+	});
+	saveToLocalStorage('users', users);
+	close_form.click();
+}
+
 function emailValidation(email){
 	//valid email address
 }
@@ -712,6 +785,41 @@ function passwordValidation(password1, password2){
 	//minimum length (8)
 	//alphanumerical
 	//same
+}
+
+function createCookie(name, value, days){
+    var expires = "";
+
+    if (days) {
+		var date = new Date();
+		date.setTime(date.getTime()+(days*24*60*60*1000));
+		expires = "; expires="+date.toGMTString();
+    }
+
+    document.cookie = name+"="+value+expires+"; path=/";
+}
+
+function readCookie(name){
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+
+    for(var i=0;i < ca.length;i++){
+        var c = ca[i];
+
+        while (c.charAt(0)==' '){
+            c = c.substring(1,c.length);
+        }
+
+        if (c.indexOf(nameEQ) == 0){
+            return c.substring(nameEQ.length,c.length);
+        }
+    }
+
+    return null;
+}
+
+function eraseCookie(name){
+    createCookie(name,"",-1);
 }
 
 
