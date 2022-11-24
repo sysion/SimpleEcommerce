@@ -23,8 +23,8 @@ const cart_checkout_total = document.querySelector('.cart-checkout p strong');
 const cancel_checkout_btn = document.querySelector('.cancel-checkout-btn');
 const continue_checkout_btn = document.querySelector('.continue-checkout-btn');
 var current_user = 'nobody';
-//var baseUrl = 'http://127.0.0.1:8080/';			// development
-var baseUrl = 'https://github.com/sysion/SimpleEcommerce/';			// production
+var baseUrl = 'http://127.0.0.1:8080/';			// development
+//var baseUrl = 'https://github.com/sysion/SimpleEcommerce/';			// production
 
 const formHtml = `<div class="form-header">
 					<a href="index.html"><img src="image/logo4.png" alt="Logo image" /></a>
@@ -623,5 +623,4 @@ function payWithPaystack(amt){
 	handler.openIframe();
 }
 
-//window.addEventListener('load', up);
 window.addEventListener('DOMContentLoaded', up);

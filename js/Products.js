@@ -1,7 +1,7 @@
 let Products = {
   1: {
     name: "Product-01",
-    img: "./image/1.png",           //this path is in relation to index.html
+    img: "./image/1.png",           //this path is relative to index.html
     desc: "first product item",
     price : 123.45
   },
