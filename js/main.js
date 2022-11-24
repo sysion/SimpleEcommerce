@@ -23,6 +23,8 @@ const cart_checkout_total = document.querySelector('.cart-checkout p strong');
 const cancel_checkout_btn = document.querySelector('.cancel-checkout-btn');
 const continue_checkout_btn = document.querySelector('.continue-checkout-btn');
 var current_user = 'nobody';
+//var baseUrl = 'http://127.0.0.1:8080/';			// development
+var baseUrl = 'https://github.com/sysion/SimpleEcommerce/';			// production
 
 const formHtml = `<div class="form-header">
 					<a href="index.html"><img src="image/logo4.png" alt="Logo image" /></a>
@@ -288,7 +290,6 @@ function deleteItem(event){
 	});
 
 	if (cart.length > 1){
-		//console.log(product[0]);
 		if (product[0].name === cart_product_name){
 			var index = cart.indexOf(product[0]);
 
@@ -383,19 +384,16 @@ function continueCheckout(){
 
 	users.forEach(user => {	//arrow function variant
 		if (user[current_user] && user['isLogin'] === 1){
-			console.log(user);
 			user_is_login = true;
 		}
 	});
 
 	if (!user_is_login){
 		cancel_checkout_btn.click();
-		alert('You need to login to do this');
 		menu_login.click();
 	}
 	else{
 		//do paystack stuff here
-		console.log(current_user);
 		var purchase_amount = Math.ceil(cart_checkout_total.innerHTML.substring(1) * 100);
 		payWithPaystack(purchase_amount);
 	}
@@ -500,9 +498,6 @@ function login_action(event){
 	var e = email.value;
 	var p = password.value;
 	var close_form = document.getElementsByClassName('close-form')[0];
-	console.log('email => '+e+', password => '+p);
-	console.log('form_login_register name => '+form_login_register.name);
-
 	var valid_user = false;
 
 	users.forEach(function(user){
@@ -535,15 +530,12 @@ function register_action(event){
 	var e = email.value;
 	var p = password.value;
 	var cp = confirm_password.value;
-	console.log('email => '+e+', password => '+p+', confirm_password => '+cp);
-	console.log('form_login_register name => '+form_login_register.name);
 
 	if (password.value === confirm_password.value && password.value.length >= 4){
 		user[email.value] = password.value;
 		user['isLogin'] = 0;
 
 		users.push(user);
-		console.log(users);
 		saveToLocalStorage('users', users);
 	}
 	else {
@@ -597,10 +589,10 @@ function passwordValidation(password1, password2){
 
 function payWithPaystack(amt){
 	var handler = PaystackPop.setup({
-		key: 'pk_test_a3ca3bbb0e1fda548bb0f946d70a71c053b3937c',
+		key: 'pk_test_gfgfgf545556gfgfgf5565fg7676',
 
 		//must be a valid email
-		email: 'sysionng@gmail.com',	
+		email: 'abc@xyz.com',	
 
 		//the amount value is multiplied by 100 to convert to the lowest currency unit
 		amount: amt,
@@ -620,7 +612,7 @@ function payWithPaystack(amt){
 			saveToLocalStorage('cart', cart);
 			saveToLocalStorage('local_cart', local_cart);
 
-			window.location.href = 'http://127.0.0.1:8080/';
+			window.location.href = baseUrl;
 		},
 		onClose: function() {
 			alert('Transaction was not completed, window closed.');
